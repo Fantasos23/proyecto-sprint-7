@@ -81,18 +81,34 @@ if mostrar_scatter:
     fig_scatter.update_layout(plot_bgcolor='white', xaxis=dict(showgrid=True, gridcolor='#EAEAEA'), yaxis=dict(showgrid=True, gridcolor='#EAEAEA'))
     st.plotly_chart(fig_scatter, use_container_width=True)
 
-# Lógica para desplegar el Histograma de Frecuencia
+# 3. Lógica para el Histograma de Frecuencia (Recompra de Clientes)
 if mostrar_histograma:
-    st.write("### 🍊 Histograma de Distribución de Frecuencia")
-    df_hist_data = df_ecommerce.groupby(['Mes', 'Creation Date']).agg(
-        Pedidos_Diarios=('Order', 'nunique')
+    st.write("### 🍊 Histograma de Frecuencia de Recompra por Cliente")
+    st.markdown("""
+    Este gráfico analiza el comportamiento de fidelización: muestra cuántos pedidos acumuló cada cliente único 
+    durante el período filtrado, permitiendo identificar el volumen de usuarios que generaron recompra.
+    """)
+    
+    # Agrupar por cliente para contar cuántas órdenes únicas realizó cada uno
+    df_recompra_cliente = df_ecommerce.groupby('Client Document').agg(
+        Total_Pedidos=('Order', 'nunique')
     ).reset_index()
     
+    # Crear el Histograma interactivo con Plotly Express
     fig_histograma = px.histogram(
-        df_hist_data, x="Pedidos_Diarios",
-        title="Frecuencia de Volumen de Pedidos Diarios en el Ecommerce",
-        labels={"Pedidos_Diarios": "Cantidad de Pedidos en un Día", "count": "Frecuencia (Días)"},
-        color_discrete_sequence=['#e6550d'], nbins=15
+        df_recompra_cliente, 
+        x="Total_Pedidos",
+        title="Distribución de Pedidos por Cliente Único",
+        labels={"Total_Pedidos": "Número de Pedidos Realizados", "count": "Cantidad de Clientes"},
+        color_discrete_sequence=['#e6550d'],
+        nbins=10
     )
-    fig_histograma.update_layout(plot_bgcolor='white', xaxis=dict(showgrid=True, gridcolor='#EAEAEA'), yaxis=dict(showgrid=True, gridcolor='#EAEAEA'))
+    
+    # Ajustes estéticos para que se vea impecable
+    fig_histograma.update_layout(
+        plot_bgcolor='white',
+        xaxis=dict(showgrid=True, gridcolor='#EAEAEA', dtick=1), # dtick=1 fuerza a mostrar números enteros (1, 2, 3...)
+        yaxis=dict(showgrid=True, gridcolor='#EAEAEA')
+    )
+    
     st.plotly_chart(fig_histograma, use_container_width=True)
