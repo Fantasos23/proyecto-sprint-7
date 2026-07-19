@@ -14,14 +14,12 @@ La aplicación cuenta con un **Panel de Visualización Interactivo** basado en c
 *   **Análisis de Relación de Compra (Gráfico de Dispersión):** Evalúa la correlación entre el volumen de clientes únicos y las órdenes totales generadas por segmento, ayudando a identificar la frecuencia de compra y el comportamiento transaccional.
 *   **Distribución de Frecuencia de Ventas (Histograma):** Analiza la densidad y comportamiento del volumen de pedidos diarios para detectar picos operativos o patrones estacionales en el e-commerce.
 
-## 📦 Tecnologías Utilizadas
+## 📦 Librerias Utilizadas
 *   **Python 3.13**
 *   **Streamlit** (Interfaz de usuario y componentes web)
 *   **Plotly Express** (Gráficos interactivos y dinámicos)
 *   **Pandas & NumPy** (Limpieza, ingeniería de variables y manipulación de datos)
 
-## 💻 Ejecución Local
+## 💻 RENDER URL
 
-1. Asegúrate de tener las librerías instaladas:
-   ```bash
-   pip install -r requirements.txt
+https://proyecto-sprint-7-2wqh.onrender.com
