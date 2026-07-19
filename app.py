@@ -16,7 +16,7 @@ para analizar la composición de clientes y la atribución de canales en tiempo 
 # 3. Carga y Procesamiento de Datos (Tu lógica para leer 'archivo_limpio_final.csv')
 @st.cache_data
 def procesar_datos_ecommerce():
-    df_sales = pd.read_csv('archivo_limpio_final.csv')
+    df_sales = pd.read_csv('notebooks/datos_web_dashboard.csv')
     
     # Filtro estricto: Solo transacciones facturadas con éxito y sin órdenes duplicadas
     df_sales = df_sales[df_sales['Status raw value (temporary)'].str.lower() == 'invoiced'].drop_duplicates(subset=['Order'], keep='first')
