@@ -13,48 +13,19 @@ Bienvenido al cuadro de mando interactivo. Esta aplicación procesa el históric
 para analizar la composición de clientes y la atribución de canales en tiempo real.
 """)
 
-# 3. Carga y Procesamiento de Datos (Tu lógica para leer 'archivo_limpio_final.csv')
+# # 3. Carga y Procesamiento de Datos Optimizado para Evitar Límites de RAM en Render
 @st.cache_data
 def procesar_datos_ecommerce():
-    df_sales = pd.read_csv('notebooks/datos_web_dashboard.csv')
-    
-    # Filtro estricto: Solo transacciones facturadas con éxito y sin órdenes duplicadas
-    df_sales = df_sales[df_sales['Status raw value (temporary)'].str.lower() == 'invoiced'].drop_duplicates(subset=['Order'], keep='first')
-    
-    # Asegurar formato de fecha correcto
-    df_sales['Creation Date'] = pd.to_datetime(df_sales['Creation Date'])
-    df_sales['Year'] = df_sales['Creation Date'].dt.year
-    df_sales['Month_Num'] = df_sales['Creation Date'].dt.month
-    
-    # DETERMINAR CLIENTES NUEVOS VS RECURRENTES
-    df_sales['First_Purchase_Date'] = df_sales.groupby('Client Document')['Creation Date'].transform('min')
-    df_sales['Tipo_Cliente'] = np.where(df_sales['Creation Date'] == df_sales['First_Purchase_Date'], 'Nuevo', 'Recurrente')
-    
-    # CLASIFICACIÓN DE ORIGEN (UTMs)
-    df_sales['UtmMedium'] = df_sales['UtmMedium'].astype(str).str.lower().str.strip()
-    palabras_pauta_reales = ['cpc', 'cpa', 'cpa+', 'paid', 'facebook', 'conversion', 'trafico']
-    
-    df_sales['Origen_Orden'] = np.where(
-        df_sales['UtmMedium'].isin(['nan', '', 'none', 'null']), 'Orgánico',
-        np.where(df_sales['UtmMedium'].str.contains('|'.join(palabras_pauta_reales)), 'Anuncios (Pauta)', 'Orgánico')
-    )
-    
-    # Filtrar únicamente primer semestre de 2026 (Ene - Jun)
-    df_2026 = df_sales[(df_sales['Year'] == 2026) & (df_sales['Month_Num'] <= 6)].copy()
-    
-    # Mapeo estético de meses
-    meses_espanol = {1: 'Enero', 2: 'Febrero', 3: 'Marzo', 4: 'Abril', 5: 'Mayo', 6: 'Junio'}
-    df_2026['Mes'] = df_2026['Month_Num'].map(meses_espanol)
-    
+    # Cargamos directamente el archivo optimizado desde la carpeta notebooks
+    df_2026 = pd.read_csv('notebooks/datos_web_dashboard.csv')
     return df_2026
 
 # Cargar los datos de forma segura
 try:
     df_ecommerce = procesar_datos_ecommerce()
 except FileNotFoundError:
-    st.error("Por favor, asegúrate de que el archivo 'archivo_limpio_final.csv' esté guardado en la raíz de la carpeta del proyecto.")
+    st.error("Por favor, asegúrate de que el archivo 'datos_web_dashboard.csv' esté dentro de la carpeta 'notebooks'.")
     st.stop()
-
 
 # --- 4. SECCIÓN DE COMPONENTES INTERACTIVOS CON CASILLAS DE VERIFICACIÓN (DESAFÍO OPCIONAL) ---
 st.write('---')
